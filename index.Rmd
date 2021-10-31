@@ -4,9 +4,15 @@ author: 'Arif P. Sulistiono / @arifpras'
 date: "31/10/2021"
 output:
   html_document:
+    df_print: paged
+    #self_contained: no
+    toc: true
+    toc_float: true
+    theme: lumen #united
+    highlight: tango
     fig_caption: yes
     css: style.css
-    number_sections: FALSE
+    number_sections: TRUE
     includes:
       after_body: footer.html
 ---
@@ -15,14 +21,15 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Prerequisite
+# Prerequisites
 
+## Clearing the environment
 ```{r clearing-first, echo=TRUE}
-#clearing the environment
 rm(list=ls())
 ls()
 ```
 
+## Packages and libraries
 ```{r packages, include = FALSE}
 #installing packages - all
 #install.packages("tidyverse")
@@ -52,20 +59,25 @@ pacman::p_load(dplyr, ggplot2, tidyr, readxl)
 #library(tidylog, warn.conflicts = FALSE)
 #library(dplyr, warn.conflicts = FALSE)
 
+#interactive plot
 library(plotly)
 ```
 
-```{r include=FALSE}
+```{r icon, include=FALSE}
 htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 ```
 
 ```{r directory, echo=TRUE}
-#setting working directory
+#which directory at the moment
 getwd()
+
+#setting working directory
 setwd("/Users/arifpras/OneDrive - The University of Nottingham/BB_KelasData/KelasData")
+
 #dir()
 ```
 
+## Datasets
 ```{r onepiece}
 #sources:
 ##--https://www.kaggle.com/michau96
@@ -128,30 +140,37 @@ glimpse(op_ages)
 
 # Data Wrangling
 
+## Filtering
 ```{r filtering}
 op_powers %>% 
   dplyr::filter(affiliations == "Marine")
 ```
 
+## Arranging
 ```{r arranging}
 op_powers %>%
-  arrange(desc(character))
+  arrange(desc(character)) #descending, alphabetical order
+# arrange(character) #ascending, alphabetical order
 ```
 
+## Recoding
 ```{r recoding}
 law <- op_powers %>% 
   mutate(character02 = 
            recode(character, 
                   "Trafalgar D. Water Law" = "Trafalgar D. Law"))
-law
+
+law %>% filter(affiliations == "Heart Pirates") %>% 
+  select(character, character02)
 ```
 
+## Slicing
 ```{r slicing}
 op_powers %>% 
-  slice(56L)
+  slice(18L) #variable number 18
 
 op_powers %>% 
-  slice(n())
+  slice(n()) #the last variable
 
 op_powers %>% 
   slice(50:n())
@@ -189,6 +208,7 @@ op_powers %>%
   slice_head(prop = 0.5)
 ```
 
+## Selecting
 ```{r selecting}
 db03 <- op_powers %>%
   select(character, affiliations)
@@ -199,28 +219,37 @@ db04 <- op_powers %>%
 db04
 ```
 
+## Relocating
 ```{r relocating}
 db05 <- op_powers %>% 
   relocate(character, power, affiliations)
 db05
 ```
 
+## Renaming
 ```{r renaming}
 status <- op_powers %>% 
   rename("status" = "level")
 status
 ```
 
+## Counting
 ```{r counting}
 op_powers %>% 
   filter(affiliations == "Marine") %>% 
-  count()
+  count() %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
+## Mutating
 ```{r mutating}
 db06 <- op_powers %>% 
   mutate(anime = "One Piece",
          power_2 = power/2)
+
 db06
 ```
 
@@ -228,9 +257,11 @@ db06
 db07 <- op_powers %>% 
   transmute(anime = "One Piece",
             power_2 = power/2)
+
 db07
 ```
 
+## Grouping
 ```{r group-by}
 db08 <- op_powers %>% 
   arrange(affiliations, desc(power)) %>% 
@@ -239,9 +270,11 @@ db08 <- op_powers %>%
   ungroup() %>% #close the group_by()
   arrange(affiliations) %>% 
   select(character, affiliations, rank)
+
 db08
 ```
 
+## Summarising
 ```{r summarising}
 db09 <- op_powers %>% 
   arrange(affiliations, desc(power)) %>% 
@@ -249,21 +282,25 @@ db09 <- op_powers %>%
   summarise(avg = mean(power, na.rm = TRUE),
             n = n()) %>%
   ungroup()
+
 db09
 ```
 
-```{r row-wise, eval=FALSE, include=FALSE}
+```{r row-wise}
 db10a <- op_powers %>%
   mutate(fase1 = power*0.25,
          fase2 = power*0.75)
-db01a
+
+db10a
 
 db10b <- db10a %>% 
   rowwise(character) %>%
   summarise(total = sum(fase1, fase2))
-db01b
+
+db10b
 ```
 
+## Dataset: Villain
 ```{r df-villain}
 villain_aff <- data.frame(
   character = c("Marshall D. Teach", "Charlotte Linlin", "Kaido", "Sakazuki Akainu", "Borsalino Kizaru"),
@@ -276,49 +313,76 @@ character_power <- data.frame(
 )
 ```
 
-
-```{r left-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+## Joining
+```{r left-join}
 #mutating joins
 villain_aff %>% 
-  left_join(character_power, by = c("name" = "name"))
+  left_join(character_power, by = c("character" = "name")) %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r right-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+```{r right-join}
 #mutating joins
 villain_aff %>% 
-  right_join(character_power, by = c("character" = "name"))
+  right_join(character_power, by = c("character" = "name")) %>%
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r inner-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+```{r inner-join}
 #mutating joins
 villain_aff %>% 
-  inner_join(character_power, by = c("character" = "name"))
+  inner_join(character_power, by = c("character" = "name"))  %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left") 
 ```
 
-```{r full-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+```{r full-join}
 #mutating joins
 villain_aff %>% 
-  full_join(character_power, by = c("character" = "name"))
+  full_join(character_power, by = c("character" = "name"))  %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r semi-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+```{r semi-join}
 #filtering joins
 villain_aff %>% 
-  semi_join(character_power, by = c("character" = "name"))
+  semi_join(character_power, by = c("character" = "name")) %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r anti-join, ref.label = 'df-villain', eval=FALSE, include=FALSE}
+```{r anti-join}
 #filtering joins
 villain_aff %>% 
-  anti_join(character_power, by = c("character" = "name"))
+  anti_join(character_power, by = c("character" = "name")) %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
+## Conditional "ifelse"
 ```{r ifelse}
 db11 <- op_powers %>% 
   mutate(villain = ifelse(affiliations == "Blackbeard Pirates", "Villain", "NA"))
+
 db11
 ```
 
+## Dataset: Luffy
 ```{r df-luffy}
 luffy00 <- tribble(
   ~arc, ~power,
@@ -328,12 +392,21 @@ luffy00 <- tribble(
   "4-Whole Cake Island", 82,
   "5-Levely", NA
 )
-luffy00
+
+kableExtra::kbl(luffy00) %>%
+    kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 
 luffy00 <- luffy00 %>% 
   add_row(arc = "6- Wano Country",
           power = 85)
-luffy00
+
+kableExtra::kbl(luffy00) %>%
+    kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
+
 
 is.na(luffy00)
 
@@ -348,15 +421,19 @@ which(is.na(luffy00))
 sum(is.na(luffy00)) 
 ```
 
-```{r filling, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
+## Treating "N/A"
+```{r filling}
 luffy01 <- luffy00 %>%
   fill(power, .direction = "up") %>% 
   mutate(method = "fill")
 
-luffy01
+kableExtra::kbl(luffy01) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r na-mean, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
+```{r na-mean}
 luffy02 <- luffy00 %>% 
   mutate(
     power = replace(power, is.na(power), mean(power, na.rm = TRUE)),
@@ -364,36 +441,52 @@ luffy02 <- luffy00 %>%
     )
 
 #luffy02$power[is.na(luffy02$power)] <- mean(luffy02$power, na.rm = TRUE)
-luffy02
+kableExtra::kbl(luffy02) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r interpolating, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
+```{r interpolating}
 luffy03 <- luffy00 %>% 
   mutate(power = zoo::na.approx(power),
          method = "interpolate")
-luffy03
+
+kableExtra::kbl(luffy03) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r dropping, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
-luffy00 %>% drop_na()
+```{r dropping}
+luffy00 %>% drop_na() %>% 
+  kableExtra::kbl() %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "left")
 ```
 
-```{r row-bind, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
+## Binding
+```{r row-bind}
 luffy04 <- rbind(luffy01, luffy02, luffy03)
 
 luffy04 <- luffy01 %>% 
   bind_rows(luffy02, luffy03)
+
+
 luffy04
 ```
 
-```{r col-bind, ref.label = 'df-luffy', eval=FALSE, include=FALSE}
+```{r col-bind}
 luffy05 <- cbind(luffy01, luffy02, luffy03)
 
 luffy05 <- luffy01 %>% 
   bind_cols(luffy02, luffy03)
+
 luffy05
 ```
 
+## Long-table
 ```{r piv-long}
 db01a <-  op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>% 
@@ -408,14 +501,16 @@ db01b <- db01a %>%
 db01b
 ```
 
-```{r piv-wider, ref.label = 'piv-long', eval=FALSE, include=FALSE}
+## Wide-table
+```{r piv-wide}
 db01c <- db01b %>% 
   pivot_wider(names_from = variable,
               values_from = value)
 db01c
 ```
 
-```{r importing-table, eval=FALSE, include=FALSE}
+## Importing Table
+```{r importing-table}
 writexl::write_xlsx(x = list(db01aSheet = db01a, db01bSheet = db01b, db01cSheet = db01c), path = "OnePiece.xlsx")
 
 write.csv(db01a, file = "csv_db01a.csv")
@@ -425,6 +520,7 @@ write.csv(db01a, file = "csv_db01a.csv")
 
 # Data Visualisation
 
+## Static Plot: No Facet
 ```{r plot01a, out.width = "100%", fig.align = "center", fig.retina = 3}
 plot01a <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -476,17 +572,7 @@ plot01a <- op_powers %>%
 plot01a
 ```
 
-```{r saving-image}
-ggsave(
-  filename = "plot01a.png",
-  plot = plot01a,
-  #device = cairo_pdf,
-  width = 297,
-  height = 210,
-  units = "mm"
-)
-```
-
+## Static Plot: With Facet
 ```{r plot01b, out.width = "100%", fig.align = "center", fig.retina = 3}
 plot01b <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -539,6 +625,19 @@ plot01b <- op_powers %>%
 plot01b
 ```
 
+## Saving Image
+```{r saving-image}
+ggsave(
+  filename = "plot01a.png",
+  plot = plot01a,
+  #device = cairo_pdf,
+  width = 297,
+  height = 210,
+  units = "mm"
+)
+```
+
+## Interactive Plot: No Facet
 ```{r plot02a, out.width = "100%", fig.align = "center", fig.retina = 3, fig.cap = 'Figure 3: The top 15-most powerful characters, without ***facet_grid(. ~ level)***', fig.topcaption = TRUE}
 plot02a <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -600,6 +699,7 @@ plot02a <- op_powers %>%
 ggplotly(plot02a, tooltip = "text")
 ```
 
+## Interactive Plot: With Facet
 ```{r plot02b, out.width = "100%", fig.align = "center", fig.retina = 3, fig.cap = "Figure 4: The top 15-most powerful characters, with ***facet_grid(. ~ level)***", fig.topcaption = TRUE}
 plot02b <- op_powers %>% 
   left_join(op_ages, by = c("character" = "name")) %>% 
