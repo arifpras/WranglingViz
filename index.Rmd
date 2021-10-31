@@ -629,6 +629,7 @@ plot01b
 ```{r saving-image}
 ggsave(
   filename = "plot01a.png",
+  #filename = "plot01a.pdf",
   plot = plot01a,
   #device = cairo_pdf,
   width = 297,
