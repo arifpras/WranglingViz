@@ -152,8 +152,8 @@ op_powers %>%
 ## Arranging
 ```{r arranging}
 op_powers %>%
+  #arrange(character) #ascending, alphabetical order
   arrange(desc(character)) #descending, alphabetical order
-# arrange(character) #ascending, alphabetical order
 ```
 
 ## Recoding
