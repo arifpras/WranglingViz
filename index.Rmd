@@ -791,7 +791,7 @@ rm(list=ls())
 *   ...and other sources i.e. stackoverflow.com, github.com
 
 ## Datasets
-*   Characters' age: https://listfist.com/list-of-one-piece-characters-by-age
-*   Characters' power: https://www.opfanpage.com/2018/06/29/one-piece-power-ranking-chart/
-*   One Piece's chapters: https://www.kaggle.com/michau96
-*   One Piece's ratings: https://www.kaggle.com/aditya2803
+*   One Piece chapter and character: https://www.kaggle.com/michau96
+*   One Piece anime rating: https://www.kaggle.com/aditya2803
+*   One Piece power ranking: https://www.opfanpage.com/2018/06/29/one-piece-power-ranking-chart/
+*   One Piece characters' age: https://listfist.com/list-of-one-piece-characters-by-age
