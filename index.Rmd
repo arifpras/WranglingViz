@@ -1,7 +1,8 @@
 ---
 title: "Data Wrangling & Visualisation"
+subtitle: 'Kelas Data R organised by <a href="https://www.instagram.com/mof.dac"> <i class="fab fa-instagram fa-fw"></i>mof.dac</a>'
 author: 'Arif P. Sulistiono / @arifpras'
-date: "31/10/2021"
+date: '28 October 2021 and 4 November 2021'
 output:
   html_document:
     df_print: paged
@@ -20,6 +21,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+***
 
 # Prerequisites
 
@@ -520,7 +523,7 @@ write.csv(db01a, file = "csv_db01a.csv")
 
 # Data Visualisation
 
-## Static Plot: No Facet
+## Static Plot: No Faceting
 ```{r plot01a, out.width = "100%", fig.align = "center", fig.retina = 3}
 plot01a <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -572,7 +575,7 @@ plot01a <- op_powers %>%
 plot01a
 ```
 
-## Static Plot: With Facet
+## Static Plot: With Faceting
 ```{r plot01b, out.width = "100%", fig.align = "center", fig.retina = 3}
 plot01b <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -638,7 +641,7 @@ ggsave(
 )
 ```
 
-## Interactive Plot: No Facet
+## Interactive Plot: No Faceting
 ```{r plot02a, out.width = "100%", fig.align = "center", fig.retina = 3, fig.cap = 'Figure 3: The top 15-most powerful characters, without ***facet_grid(. ~ level)***', fig.topcaption = TRUE}
 plot02a <- op_powers %>%
   left_join(op_ages, by = c("character" = "name")) %>%
@@ -700,7 +703,7 @@ plot02a <- op_powers %>%
 ggplotly(plot02a, tooltip = "text")
 ```
 
-## Interactive Plot: With Facet
+## Interactive Plot: With Faceting
 ```{r plot02b, out.width = "100%", fig.align = "center", fig.retina = 3, fig.cap = "Figure 4: The top 15-most powerful characters, with ***facet_grid(. ~ level)***", fig.topcaption = TRUE}
 plot02b <- op_powers %>% 
   left_join(op_ages, by = c("character" = "name")) %>% 
@@ -772,3 +775,23 @@ ggplotly(plot02b, tooltip = "text")
 ls()
 rm(list=ls())
 ```
+
+***
+
+# Acknowledgements
+
+## References
+
+*   Grolemund, G., & Wickham, H. (2017). R for Data Science. O’Reilly Media.
+*   R Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+*   Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686.
+*   Claus O. Wilke: Data Visualization in R, https://wilkelab.org/SDS375/
+*   Cedric Scherer's personal blog: https://www.cedricscherer.com/
+*   The R Graph Gallery: https://www.r-graph-gallery.com/index.html
+*   ...and other sources i.e. stackoverflow.com, github.com
+
+## Datasets
+*   Characters' age: https://listfist.com/list-of-one-piece-characters-by-age
+*   Characters' power: https://www.opfanpage.com/2018/06/29/one-piece-power-ranking-chart/
+*   One Piece's chapters: https://www.kaggle.com/michau96
+*   One Piece's ratings: https://www.kaggle.com/aditya2803
