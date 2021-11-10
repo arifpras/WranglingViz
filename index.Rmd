@@ -951,7 +951,7 @@ line03 <- op_ratings02 %>%
     plot.subtitle = element_text(hjust = 0, size = 13),
     plot.caption = element_text(hjust = 0, size = 8),
     plot.title.position = "plot",
-    plot.caption.position =  "plot",) +
+    plot.caption.position =  "plot") +
   labs(title = "One Piece",
        subtitle = "Ratings and Votes",
        y = "",
